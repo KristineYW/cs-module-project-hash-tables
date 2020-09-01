@@ -21,8 +21,9 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
-
+        self.capacity = capacity
+        self.hash_table = [None for i in range(capacity)]
+        self.total_keys = 0
 
     def get_num_slots(self):
         """
@@ -34,7 +35,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return len(self.hash_table)
 
 
     def get_load_factor(self):
@@ -43,7 +44,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        # per Google: The load factor is the number of keys stored in the hash table divided by the capacity.
+        return (self.total_keys / self.capacity)
 
 
     def fnv1(self, key):
@@ -62,7 +64,13 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash = 5381
+        byte_array = key.encode('utf-8')
+
+        for byte in byte_array:
+            hash = ((hash * 33) + byte)
+
+        return hash & 0xffffffff
 
 
     def hash_index(self, key):
@@ -81,8 +89,21 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        cur_value = self.hash_table[index]
 
+        while cur_value is not None:
+            if cur_value.key == key:
+                cur_value.value = value
+                return
+
+            cur_value = cur_value.next
+
+        new_value = HashTableEntry(key, value)
+        new_value.next = self.hash_table[index]
+        self.hash_table[index] = new_value
+
+        self.total_keys += 1
 
     def delete(self, key):
         """
@@ -92,8 +113,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
 
+        index = self.hash_index(key)
+        self.hash_table[index] = None
+
+        self.total_keys -= 1
 
     def get(self, key):
         """
@@ -103,7 +127,15 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        
+        current = self.hash_table[index]
+
+        while current is not None:
+            if current.key == key:
+                return current.value 
+        
+            current = current.next
 
 
     def resize(self, new_capacity):
