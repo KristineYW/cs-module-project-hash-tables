@@ -22,7 +22,9 @@ class HashTable:
 
     def __init__(self, capacity):
         self.capacity = capacity
+        # Create empty hash table with all None values
         self.hash_table = [None for i in range(capacity)]
+        # Keeping track of the total number of keys for ll calculation
         self.total_keys = 0
 
     def get_num_slots(self):
@@ -35,7 +37,7 @@ class HashTable:
 
         Implement this.
         """
-        return len(self.hash_table)
+        return len(self.hash_table) # also self.capacity should be fine
 
 
     def get_load_factor(self):
@@ -89,20 +91,31 @@ class HashTable:
 
         Implement this.
         """
+
+        # Find the index
         index = self.hash_index(key)
-        cur_value = self.hash_table[index]
+        # Create variable for the value at index
+        current_node = self.hash_table[index]
 
-        while cur_value is not None:
-            if cur_value.key == key:
-                cur_value.value = value
+        # While the node has a value and we haven't reached the end of our list:
+        while current_node is not None:
+            # If the current node's key is key is the key we're looking for:
+            if current_node.key == key:
+                # Assign the value to the node
+                current_node.value = value
                 return
+            else:
+                # Or move on to the next node
+                current_node = current_node.next
 
-            cur_value = cur_value.next
+        # Create a new node with the HashTableEntry
+        new_node = HashTableEntry(key, value)
+        # Assign the index at the hash table we're on to be the .next node of the new_node
+        new_node.next = self.hash_table[index]
+        # Assign the new_node to the index we're on
+        self.hash_table[index] = new_node
 
-        new_value = HashTableEntry(key, value)
-        new_value.next = self.hash_table[index]
-        self.hash_table[index] = new_value
-
+        # Add 1 to the total number of keys we're storing.
         self.total_keys += 1
 
     def delete(self, key):
@@ -114,9 +127,12 @@ class HashTable:
         Implement this.
         """
 
+        # Find the index
         index = self.hash_index(key)
+        # Set the value of the node of that index to None
         self.hash_table[index] = None
 
+        # Reduce the total number of keys by 1
         self.total_keys -= 1
 
     def get(self, key):
@@ -127,15 +143,20 @@ class HashTable:
 
         Implement this.
         """
+        # Find the index
         index = self.hash_index(key)
-        
-        current = self.hash_table[index]
+        # Find the node at the index
+        current_node = self.hash_table[index]
 
-        while current is not None:
-            if current.key == key:
-                return current.value 
-        
-            current = current.next
+        # If node is not empty:
+        while current_node is not None:
+            # And the current node's key is the key we're looking for:
+            if current_node.key == key:
+                # Return the value of the key
+                return current_node.value 
+            else:
+                # Or move on to check the next node
+                current_node = current_node.next
 
 
     def resize(self, new_capacity):
@@ -145,7 +166,20 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        # new_capacity = self.capacity * 2
+        old_table = self.hash_table
+        new_table = [None for i in range(new_capacity)]
+        self.hash_table = new_table
+        self.capacity = new_capacity
+
+        for i in range(len(old_table)):
+            current_node = old_table[i]
+            while current_node is not None:
+                self.put(current_node.key, current_node.value)
+                current_node = current_node.next
+
+
 
 
 

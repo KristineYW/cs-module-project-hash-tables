@@ -1,4 +1,5 @@
-# Your code here
+import math
+import random
 
 
 def slowfun_too_slow(x, y):
@@ -15,6 +16,8 @@ def slowfun(x, y):
     output, but completes quickly instead of taking ages to run.
     """
     # Your code here
+    return (math.factorial(math.pow(x,y)) // (x + y) %= 982451653
+    
 
 
 
